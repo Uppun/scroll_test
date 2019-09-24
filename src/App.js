@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import TestObject from './testObject';
+import TestNavBar from './testNavBar';
 
 function App() {
+
+  const [active, setActive] = useState('red');
+
+  const handleScroll = () => {
+    const scrollPos = window.pageYOffset;
+    const pages = document.getElementById('pages').children;
+    for (const page of pages) {
+      const {y, height} = page.getBoundingClientRect();
+      if (y < scrollPos && (y + height) >= scrollPos) {
+        setActive(page.id);
+        window.location.hash = page.id;
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (window.location.hash) {
+      setActive(window.location.hash.substr(1));
+    }
+
+    document.addEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+
+  })
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TestNavBar active={active} />
+      <div id='pages'>
+        <TestObject color='red' />
+        <TestObject color='blue' />
+        <TestObject color='green' />
+      </div>
     </div>
   );
 }
